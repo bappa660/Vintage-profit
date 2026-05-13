@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #1e40af;
+  --accent-blue: #60a5fa;
+  --bg-main: #f0f4f8;
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --font-main: "Outfit", "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme {
+  --font-sans: var(--font-main);
+  --color-primary-blue: var(--primary-blue);
+  --color-secondary-blue: var(--secondary-blue);
+}
+
+body {
+  @apply bg-[#e2e8f0] text-slate-900 antialiased;
+  font-family: var(--font-sans);
+}
+
+.premium-gradient {
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+}
+
+.glass-card {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+.glass-pill {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+}
+
+.plan-card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.wallet-card-shadow {
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

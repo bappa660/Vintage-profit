@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and financial balance",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "accountID": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "walletBalance": { "type": "number" },
+        "createdTime": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["active", "suspended"] }
+      },
+      "required": ["uid", "accountID", "name", "email", "walletBalance", "createdTime", "status"]
+    },
+    "Plan": {
+      "title": "Investment Plan",
+      "description": "Available investment plans",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "image": { "type": "string" },
+        "price": { "type": "number" },
+        "daily": { "type": "number" },
+        "revenue": { "type": "number" },
+        "period": { "type": "number", "description": "Duration in days" }
+      },
+      "required": ["name", "image", "price", "daily", "revenue", "period"]
+    },
+    "Purchase": {
+      "title": "Plan Purchase",
+      "description": "Record of a user purchasing an investment plan",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "planId": { "type": "string" },
+        "planName": { "type": "string" },
+        "price": { "type": "number" },
+        "daily": { "type": "number" },
+        "purchaseTime": { "type": "string", "format": "date-time" },
+        "expiryTime": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["active", "completed"] }
+      },
+      "required": ["userId", "planId", "planName", "price", "daily", "purchaseTime", "expiryTime", "status"]
+    },
+    "Deposit": {
+      "title": "Deposit Request",
+      "description": "User request to add money to wallet",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "utrNumber": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "success", "rejected"] }
+      },
+      "required": ["userId", "amount", "utrNumber", "timestamp", "status"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal Request",
+      "description": "User request to withdraw money",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "upiId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "success", "rejected"] }
+      },
+      "required": ["userId", "amount", "upiId", "timestamp", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/plans/{planId}": {
+      "schema": "Plan",
+      "description": "Investment plans"
+    },
+    "/purchases/{purchaseId}": {
+      "schema": "Purchase",
+      "description": "Purchased plans history"
+    },
+    "/deposits/{depositId}": {
+      "schema": "Deposit",
+      "description": "Deposit requests history"
+    },
+    "/withdrawals/{withdrawalId}": {
+      "schema": "Withdrawal",
+      "description": "Withdrawal requests history"
+    }
+  }
+}

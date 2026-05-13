@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      // Robust admin check including all reported UIDs and emails
+      return isSignedIn() && (
+        request.auth.token.email in ['ps07716398@gmail.com', 'ps0771639@gmail.com'] || 
+        request.auth.uid in ['HQX4UGI2L8Vs8QkAgIE4Pe5fl8A3']
+      );
+    }
+
+    // --- Validation Helpers ---
+    function isValidUser(data) {
+      return data.uid is string &&
+             data.name is string &&
+             data.email is string &&
+             data.walletBalance is number &&
+             data.status in ['active', 'suspended'];
+    }
+
+    function isValidPurchase(data) {
+      return data.userId == request.auth.uid &&
+             data.planId is string &&
+             data.price is number &&
+             data.daily is number &&
+             data.status in ['active', 'completed'];
+    }
+
+    // --- Collection Rules ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if (isOwner(userId) || isAdmin()) && 
+                    incoming().uid == userId;
+    }
+
+    match /plans/{planId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /purchases/{purchaseId} {
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidPurchase(incoming());
+    }
+
+    match /deposits/{depositId} {
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (incoming().userId == request.auth.uid || isAdmin());
+    }
+
+    match /withdrawals/{withdrawalId} {
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (incoming().userId == request.auth.uid || isAdmin());
+    }
+  }
+}
